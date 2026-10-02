@@ -1,32 +1,58 @@
-% ---------- Strona (A5, książeczka) ----------
-\usepackage[a5paper,
-    inner=17mm, outer=14mm, top=18mm, bottom=20mm,
-    headsep=6mm, footskip=10mm]{geometry}
+% Pakiety, geometria A5, kroje.
+% Przełączniki \ifekran i \ifpolski są ustawiane w main.tex.
+\makeatletter
 
-% ---------- Język i fonty ----------
-\usepackage[russian,main=polish]{babel}
-\usepackage{luatexja-fontspec}         % japoński; ładuje też fontspec
-\ltjsetparameter{jacharrange={-2,-3}} % cyrylica i symbole jako znaki łacińskie (bez rozstrzelenia)
+% ---------- Strona (A5, dwustronnie) ----------------------------------
+\usepackage[a5paper, inner=18mm, outer=15mm, top=19mm, bottom=20mm,
+  headsep=6mm, footskip=10mm, headheight=12.5pt]{geometry}
 
-\setmainfont{Inter}[
-    Ligatures=TeX,
-    RawFeature={+ss01} % alternatywne cyfry; usuń, jeśli wolisz klasyczne
-]
-\newfontfamily\displayfont{Inter Display}[Ligatures=TeX] % Inter 4.x; jeśli brak → zmień na {Inter}
-\setmainjfont{HaranoAjiGothic-Regular.otf}[BoldFont=HaranoAjiGothic-Bold.otf]
-% Alternatywa, jeśli masz Noto: \setmainjfont{Noto Sans CJK JP}
+% ---------- Język -----------------------------------------------------
+\ifpolski
+  \usepackage[english,polish]{babel}
+\else
+  \usepackage[polish,english]{babel}
+\fi
+
+% ---------- Kroje ------------------------------------------------------
+% URW Bookman (klon ITC Bookman) + URW Gothic (klon ITC Avant Garde):
+% para, która definiuje typografię lat 70. Obie mają polskie znaki i cyrylicę.
+% Pliki .otf: folder fonts/ w katalogu projektu albo zainstalowane w systemie.
+% Japoński: fallback na Harano Aji (jest w TeX Live).
+\usepackage{fontspec}
+\IfFileExists{fonts/URWBookman-Light.otf}
+  {\def\bx@fp{fonts/}}{\def\bx@fp{}}
+
+\directlua{
+  luaotfload.add_fallback("bxserif", {"[HaranoAjiMincho-Regular.otf]:mode=node;"})
+  luaotfload.add_fallback("bxsans",  {"[HaranoAjiGothic-Medium.otf]:mode=node;"})
+}
+
+\setmainfont{URWBookman-Light.otf}[
+  Path=\bx@fp,
+  BoldFont=URWBookman-Demi.otf,
+  ItalicFont=URWBookman-LightItalic.otf,
+  BoldItalicFont=URWBookman-DemiItalic.otf,
+  RawFeature={fallback=bxserif}]
+\setsansfont{URWGothic-Book.otf}[
+  Path=\bx@fp,
+  BoldFont=URWGothic-Demi.otf,
+  ItalicFont=URWGothic-BookOblique.otf,
+  BoldItalicFont=URWGothic-DemiOblique.otf,
+  RawFeature={fallback=bxsans}]
+\newfontfamily\bxdisplay{URWGothic-Demi.otf}[
+  Path=\bx@fp, RawFeature={fallback=bxsans}]
 
 \usepackage{microtype}
-\usepackage{csquotes}
 
-% ---------- Pakiety pomocnicze ----------
+% ---------- Pakiety pomocnicze ----------------------------------------
 \usepackage{xcolor}
 \usepackage{graphicx}
 \graphicspath{{img/}}
-\usepackage{ragged2e}
-\usepackage{fancyhdr}
-\usepackage[titles]{tocloft}
+\usepackage{tikz}
+\usepackage{needspace}
+\usepackage{lettrine}
+\usepackage{scrlayer-scrpage}
 \usepackage{lipsum} % tylko do podglądu — usuń, gdy wstawisz własne teksty
-\usepackage[backend=biber]{biblatex}
-\addbibresource{bibliografia.bib}
-\usepackage[hidelinks]{hyperref}
+\usepackage[hidelinks, pdfusetitle]{hyperref}
+
+\makeatother

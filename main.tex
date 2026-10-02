@@ -1,19 +1,22 @@
-\documentclass[10pt,twoside]{article}
+\documentclass[paper=a5, twoside=true, fontsize=9.5pt, parskip=false]{scrbook}
+
+% ---------- Przełączniki ----------
+\newif\ifekran  \ekrantrue  % \ekranfalse  → białe tło (druk)
+\newif\ifpolski \polskitrue % \polskifalse → etykiety EN (Side, Tracklist)
 
 \input{preamble/packages}
 \input{preamble/style}
 \input{preamble/commands}
 
-\tytul{Katabaza. Orfeusz poza Ameryką}
-%\engtytul{Katabasis: Orpheus Outside America}
-\podtytul{Piosenka autorska spoza USA}
-\autor{Twój nick}
-\rok{2026}
+\tytul[Katabasis Orfeusz poza Ameryką]{Katabasis \\ Orfeusz poza Ameryką} % [krótki do nagłówka]{na okładkę, można \\}
+\podtytul{Piosenka autorska spoza USA.\\Sześć stron, trzydzieści sześć płyt.}
+\autor{Szymon Urban}
+\stopka{Box set · 2026}
 
 \begin{document}
 
-\stronatytulowa
-\tableofcontents
+\okladka
+\tracklista
 
 \input{tex/00-wstep}
 \input{tex/01-filary}
@@ -22,7 +25,6 @@
 \input{tex/04-katakumby}
 \input{tex/05-awangarda}
 \input{tex/06-spadkobiercy}
-
-% \printbibliography
+\input{tex/07-kolofon}
 
 \end{document}

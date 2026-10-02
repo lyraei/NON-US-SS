@@ -35,7 +35,7 @@
 ## Piwnica
 
 1. Vashti Bunyan – *Just Another Diamond Day* (1970, UK)
-2. Marek Grechuta & Anawa – *Korowód* (1971, PL)
+2. Marek Grechuta & Anawa – *Korowód* (1971, PL, pl)
 3. Haruomi Hosono – *Hosono House* (1973, JP, ja)
 4. Silvio Rodríguez – *Días y flores* (1975, CU, es)
 5. Richard & Linda Thompson – *Shoot Out the Lights* (1982, UK)
@@ -43,7 +43,7 @@
 
 **Alternatywy**
 
-- Dionysis Savvopoulos – *Το περιβόλι του τρελού* (1969, GR, el)
+- Dionysis Savvopoulos – *Το περιβόλι του τρελλού* (1969, GR, el)
 - Bill Fay – *Time of the Last Persecution* (1971, UK)
 - Selda Bağcan – *Selda* (1976, TR, tr)
 
@@ -68,7 +68,7 @@
 2. Brigitte Fontaine – *Comme à la radio* (1969, FR, fr)
 3. Robert Wyatt – *Rock Bottom* (1974, UK)
 4. Kate Bush – *The Dreaming* (1982, UK)
-5. Księżyc – *Księżyc* (1996, PL)
+5. Księżyc – *Księżyc* (1996, PL, pl)
 6. Jenny Hval – *Apocalypse, girl* (2015, NO)
 
 **Alternatywy**
@@ -80,7 +80,7 @@
 ## Współcześni spadkobiercy
 
 1. Rokia Traoré – *Tchamantché* (2008, ML, bambara/fr)
-2. Sílvia Pérez Cruz – *11 de novembre* (2012, ES/Katalonia)
+2. Sílvia Pérez Cruz – *11 de novembre* (2012, ES/Katalonia, ca/es)
 3. Rodrigo Amarante – *Cavalo* (2013, BR, pt/en/fr)
 4. Andy Shauf – *The Party* (2016, CA)
 5. Aldous Harding – *Party* (2017, NZ)

@@ -1,63 +1,194 @@
-% Makra używane w treści (tex/*.tex).
+% Makra używane w treści (tex/*.tex): \motto, \wstep, \tier, album, \cytat, \kolofon.
 \makeatletter
+\ExplSyntaxOn
 
-% Oryginał + transliteracja: \oryg{Янка Дягилева}{Yanka Dyagileva}
-\newcommand{\oryg}[2]{\texorpdfstring{#1\hspace{0.45em}{\color{szary2}\mdseries\upshape #2}}{#1 (#2)}}
+% ---------- Motto (lewa strona przed wstępem) ---------------------------
+% \motto{Tekst motta.}{Autor, źródło}
+\NewDocumentCommand \motto { m m }
+  {
+    \cleardoubleevenemptypage
+    \thispagestyle{empty}
+    \null\vfill
+    \begin{flushright}
+      \begin{minipage}{0.75\linewidth}
+        \raggedleft
+        {\itshape\large #1}\par\vspace{3mm}
+        {\color{bxszary}\bxcaps[18]{\scriptsize #2}}
+      \end{minipage}
+    \end{flushright}
+    \vspace*{28mm}
+  }
 
-% ---------- Rozdział (wstęp, posłowie) ----------
-% \rozdzial{Wstęp}
-\newcommand{\rozdzial}[1]{%
-    \cleardoublepage\thispagestyle{plain}%
-    \markright{#1}\phantomsection
-    \addcontentsline{toc}{section}{#1}%
-    \bs@naglowek{#1}}
+% ---------- Wstęp ------------------------------------------------------
+% \wstep{Wstęp}
+\NewDocumentCommand \wstep { m }
+  {
+    \cleardoubleoddemptypage
+    \thispagestyle{plain.scrheadings}
+    \gdef\bx@mark{#1}
+    \colorlet{tier}{rdza}
+    \pdfbookmark[0]{#1}{bx-wstep}
+    \vspace*{16mm}
+    \noindent
+    \bx@pasy[3mm]{musztarda,pomarancz,rdza,sliwka,morski,oliwka}{0mm}%
+    {\bxdisplay\fontsize{24}{26}\selectfont #1}\par
+    \vspace{3mm}
+    \noindent{\color{tier}\rule{18mm}{1.4pt}}\par
+    \vspace{7mm}
+    \use:c{@afterindentfalse}\use:c{@afterheading}
+  }
 
-\newcommand{\engtytul}[1]{%
-    \cleardoublepage\thispagestyle{plain}%
-    \markright{#1}\phantomsection
-    \addcontentsline{toc}{section}{#1}%
-    \bs@naglowek{#1}}    
+% ---------- Tier = strona płyty ----------------------------------------
+% \tier{Filary}{Pillars}{musztarda}   (nazwa, podtytuł, kolor)
+\newsavebox\bx@litera
+\newsavebox\bx@etykieta
+\NewDocumentCommand \tier { m m m }
+  {
+    \cleardoubleoddemptypage
+    \stepcounter{bxside}
+    \xglobal\colorlet{tier}{#3}
+    \xdef\bx@mark{\bx@lside{}~\Alph{bxside}~·~\exp_not:n{#1}}
+    \exp_args:Nnx \addtocontents {trk}
+      { \exp_not:N \bxtrkside {\Alph{bxside}} {\exp_not:n{#1}} {\exp_not:n{#2}} {#3} }
+    \pdfbookmark[0]{\bx@lside{}~\Alph{bxside}:~#1}{bx-side-\Alph{bxside}}
+    \thispagestyle{plain.scrheadings}
+    \sbox\bx@litera{\color{#3}\bxdisplay\fontsize{150}{150}\selectfont \Alph{bxside}}
+    \sbox\bx@etykieta{\color{#3}\bxcaps[22]{\scriptsize\bfseries \bx@lside{}~\Alph{bxside}}}
+    % blok nagłówka ma wysokość litery: etykieta równo z jej górą,
+    % kreska na jej linii bazowej; szerokość omija literę (+5 mm odstępu)
+    \vspace*{6mm}
+    \noindent
+    \bx@pasy[4.5mm]{#3,#3!72,#3!48,#3!26}{0mm}%
+    \begin{minipage}[t][\ht\bx@litera][t]
+      {\dimexpr\linewidth-\wd\bx@litera+9mm+15mm-5mm\relax}
+      \raggedright
+      \begin{tikzpicture}[remember~picture, overlay]
+        \coordinate (bx-etykieta) at (0,0);
+        \node[anchor=north~east, inner~sep=0pt, text=#3]
+          at ([xshift=9mm, yshift=\ht\bx@etykieta]current~page.east~|-~bx-etykieta)
+          {\usebox\bx@litera};
+      \end{tikzpicture}%
+      \usebox\bx@etykieta\par
+      \vspace{2mm}
+      {\bxdisplay\fontsize{26}{28}\selectfont #1\par}
+      \tl_if_blank:nF {#2}
+        { \vspace{1mm}{\color{bxszary}\itshape\large #2}\par }
+      \vfill
+      {\color{#3}\rule{18mm}{1.4pt}}
+    \end{minipage}\par
+    \vspace{8mm}
+    \use:c{@afterindentfalse}\use:c{@afterheading}
+  }
 
-% ---------- Tier ----------
-% \tier{I}{Filary}
-\newcommand{\tier}[2]{%
-    \cleardoublepage\thispagestyle{plain}%
-    \markright{#2}\phantomsection
-    \addcontentsline{toc}{section}{\texorpdfstring{#1\hspace{0.6em}#2}{#1. #2}}%
-    \vspace*{12mm}
-    {\numerfont #1\par}
-    \vspace{-4mm}
-    \bs@naglowek{#2}}
-
-% ---------- Album ----------
-\newlength{\okladkaszer}\setlength{\okladkaszer}{28mm}
-\newlength{\okladkaodstep}\setlength{\okladkaodstep}{5mm}
-\newlength{\albumodstep}\setlength{\albumodstep}{7mm}
-
-% Ścieżka względem img/; brak pliku → szary placeholder
-\newcommand{\okladka}[1]{%
-    \IfFileExists{img/#1}%
-    {\includegraphics[width=\okladkaszer,height=\okladkaszer,keepaspectratio]{#1}}%
-    {{\setlength{\fboxsep}{0pt}%
-            \colorbox{szary1}{\parbox[c][\okladkaszer][c]{\okladkaszer}%
-                {\centering\scriptsize\color{szary2}okładka}}}}}
-
-% \begin{album}{okladki/plik.jpg}{Artysta}{Tytuł}{1971 · BR · pt}
+% ---------- Album -------------------------------------------------------
+% \begin{album}{artist=..., artist-latn=..., title=..., title-latn=...,
+%               year=..., country=..., lang=..., note=..., cover=okladki/plik.jpg}
 %   opis
 % \end{album}
-\newenvironment{album}[4]{%
-    \par\addvspace{\albumodstep}%
-    \phantomsection\addcontentsline{toc}{subsection}{\texorpdfstring{#2 — \textit{#3}}{#2 — #3}}%
-    \noindent
-    \begin{minipage}[t]{\okladkaszer}\vspace{0pt}\okladka{#1}\end{minipage}%
-    \hspace{\okladkaodstep}%
-    \begin{minipage}[t]{\dimexpr\linewidth-\okladkaszer-\okladkaodstep\relax}\vspace{-0.3ex}%
-        \RaggedRight
-        {\artystafont #2\par}
-        {\tytulfont #3\par}
-        \vspace{0.4ex}{\metafont #4\par}
-        \vspace{1.4ex}\small
-}{%
-    \end{minipage}\par}
+% cover: ścieżka względem img/; brak pliku → placeholder w kolorze tieru
+\newlength{\bxokladka}
+\setlength{\bxokladka}{30mm}
+
+\keys_define:nn { bx/album }
+  {
+    artist      .tl_set:N = \l_bx_artist_tl,
+    artist-latn .tl_set:N = \l_bx_artistlatn_tl,
+    title       .tl_set:N = \l_bx_title_tl,
+    title-latn  .tl_set:N = \l_bx_titlelatn_tl,
+    year        .tl_set:N = \l_bx_year_tl,
+    country     .tl_set:N = \l_bx_country_tl,
+    lang        .tl_set:N = \l_bx_lang_tl,
+    note        .tl_set:N = \l_bx_note_tl,
+    cover       .tl_set:N = \l_bx_cover_tl,
+  }
+\tl_new:N \l_bx_code_tl
+\tl_new:N \l_bx_meta_tl
+
+\cs_new_protected:Npn \bx_placeholder:
+  {
+    \begin{tikzpicture}
+      \fill[tier!14] (0,0) rectangle (\bxokladka,\bxokladka);
+      \foreach \k [count=\i] in {tier, tier!60, tier!32}
+        { \fill[\k] (0,{(\i-1)*1.6mm+3mm}) rectangle (\bxokladka,{\i*1.6mm+3mm}); }
+      \node[text=tier, font=\bxdisplay\fontsize{20}{20}\selectfont]
+        at (0.5\bxokladka, 0.62\bxokladka) {\l_bx_code_tl};
+      \draw[tier!55, line~width=0.4pt] (0,0) rectangle (\bxokladka,\bxokladka);
+    \end{tikzpicture}
+  }
+
+\cs_new_protected:Npn \bx_cover:
+  {
+    \tl_if_blank:VTF \l_bx_cover_tl
+      { \bx_placeholder: }
+      {
+        \file_if_exist:nTF { img/ \l_bx_cover_tl }
+          { \includegraphics[width=\bxokladka, height=\bxokladka]{\l_bx_cover_tl} }
+          { \bx_placeholder: }
+      }
+  }
+
+\NewDocumentEnvironment { album } { m }
+  {
+    \keys_set:nn { bx/album } {#1}
+    \par\addvspace{1.8\baselineskip}
+    \Needspace{50mm}
+    \stepcounter{bxtrack}
+    \tl_set:Nx \l_bx_code_tl { \Alph{bxside}\arabic{bxtrack} }
+    \exp_args:Nnx \addtocontents {trk}
+      {
+        \exp_not:N \bxtrkentry {\l_bx_code_tl}
+          {\exp_not:V \l_bx_artist_tl} {\exp_not:V \l_bx_artistlatn_tl}
+          {\exp_not:V \l_bx_title_tl}  {\exp_not:V \l_bx_titlelatn_tl}
+          {\exp_not:N \thepage}
+      }
+    \tl_set:Nx \l_bx_meta_tl { \exp_not:V \l_bx_year_tl }
+    \tl_if_blank:VF \l_bx_country_tl
+      { \tl_put_right:Nx \l_bx_meta_tl { \exp_not:n {~·~} \exp_not:V \l_bx_country_tl } }
+    \tl_if_blank:VF \l_bx_lang_tl
+      { \tl_put_right:Nx \l_bx_meta_tl { \exp_not:n {~·~} \exp_not:V \l_bx_lang_tl } }
+    \noindent\hypertarget{bx-\l_bx_code_tl}{}%
+    \begin{minipage}[t]{\bxokladka}
+      \vspace{0pt}\bx_cover:
+    \end{minipage}%
+    \hspace{4.5mm}%
+    \begin{minipage}[t]{\dimexpr\linewidth-\bxokladka-4.5mm}
+      \vspace{0pt}\raggedright
+      {\color{tier}\bxcaps[12]{\footnotesize\bfseries\l_bx_code_tl}}\par
+      \vspace{1.5pt}
+      {\bxdisplay\fontsize{12}{13.5}\selectfont \l_bx_artist_tl}\par
+      \tl_if_blank:VF \l_bx_artistlatn_tl
+        { {\color{bxszary}\sffamily\scriptsize \l_bx_artistlatn_tl}\par }
+      \vspace{2.5pt}
+      {\itshape\fontsize{14}{16}\selectfont \l_bx_title_tl}\par
+      \tl_if_blank:VF \l_bx_titlelatn_tl
+        { {\color{bxszary}\itshape\footnotesize \l_bx_titlelatn_tl}\par }
+      \vspace{5pt}
+      {\color{bxszary!85!bxatrament}\bxcaps[18]{\fontsize{6.6}{8}\selectfont \l_bx_meta_tl}}\par
+      \tl_if_blank:VF \l_bx_note_tl
+        { \vspace{1pt}{\color{bxszary}\sffamily\fontsize{6.6}{8}\selectfont \l_bx_note_tl}\par }
+    \end{minipage}\par
+    \vspace{0.9\baselineskip}
+    \use:c{@afterindentfalse}\use:c{@afterheading}
+  }
+  { \par }
+
+\ExplSyntaxOff
+
+% ---------- Cytat wyróżniony (pull quote) ------------------------------
+% \cytat{Tekst.}
+\newcommand\cytat[1]{%
+  \par\medskip
+  {\centering\color{tier}\rule{12mm}{1.2pt}\par\smallskip
+   \itshape\large #1\par}%
+  \medskip}
+
+% ---------- Kolofon (jak „Recorded at…” na końcu wkładki) ---------------
+% \kolofon{Tekst.}
+\newcommand\kolofon[1]{%
+  \cleardoubleevenemptypage\thispagestyle{empty}%
+  \null\vfill
+  {\color{bxszary}\sffamily\scriptsize\raggedright #1\par}%
+  \vspace{6mm}%
+  \noindent\bx@pasy[3mm]{oliwka,morski,sliwka,rdza,pomarancz,musztarda}{\dimexpr\paperheight-18mm\relax}}
 
 \makeatother
