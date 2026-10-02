@@ -1,0 +1,157 @@
+% boxset.sty — książeczka A5 do listy płyt (LuaLaTeX)
+\NeedsTeXFormat{LaTeX2e}
+\ProvidesPackage{boxset}[2026/10/02 Box set booklet]
+
+% ---------- Strona ----------
+\RequirePackage[a5paper,
+  inner=17mm, outer=14mm, top=18mm, bottom=20mm,
+  headsep=6mm, footskip=10mm]{geometry}
+
+% ---------- Język i fonty ----------
+\RequirePackage[russian,main=polish]{babel}
+\RequirePackage{luatexja-fontspec}   % japoński; ładuje też fontspec
+\ltjsetparameter{jacharrange={-2,-3}} % cyrylica i symbole jako znaki łacińskie (bez rozstrzelenia)
+
+\setmainfont{Inter}[
+  Ligatures=TeX,
+  RawFeature={+ss01}     % alternatywne cyfry; usuń, jeśli wolisz klasyczne
+]
+\newfontfamily\displayfont{Inter Display}[Ligatures=TeX]  % Inter 4.x; jeśli brak → zmień na {Inter}
+\setmainjfont{HaranoAjiGothic-Regular.otf}[BoldFont=HaranoAjiGothic-Bold.otf]
+% Alternatywa, jeśli masz Noto: \setmainjfont{Noto Sans CJK JP}
+
+\RequirePackage{microtype}
+\linespread{1.18}
+\setlength{\parindent}{1.1em}
+\setlength{\parskip}{0pt}
+
+% ---------- Kolory (monochrom) ----------
+\RequirePackage{xcolor}
+\definecolor{szary1}{gray}{0.93}   % tła, placeholdery
+\definecolor{szary2}{gray}{0.55}   % metadane, transliteracje
+\definecolor{szary3}{gray}{0.35}   % pagina, linie
+
+% ---------- Pakiety pomocnicze ----------
+\RequirePackage{graphicx}
+\RequirePackage{ragged2e}
+\RequirePackage{fancyhdr}
+\RequirePackage[titles]{tocloft}
+\RequirePackage[hidelinks]{hyperref}
+
+% ---------- Style tekstu ----------
+\newcommand{\etykieta}{\addfontfeatures{LetterSpace=12, RawFeature=+case}\MakeUppercase}
+\newcommand{\numerfont}{\displayfont\fontsize{40}{40}\selectfont\color{szary2}}
+\newcommand{\tierfont}{\displayfont\bfseries\fontsize{22}{26}\selectfont}
+\newcommand{\artystafont}{\bfseries\small}
+\newcommand{\tytulfont}{\itshape}
+\newcommand{\metafont}{\footnotesize\color{szary2}}
+
+% Oryginał + transliteracja: \oryg{Янка Дягилева}{Yanka Dyagileva}
+\newcommand{\oryg}[2]{\texorpdfstring{#1\hspace{0.45em}{\color{szary2}\mdseries\upshape #2}}{#1 (#2)}}
+
+% ---------- Dane książeczki ----------
+\makeatletter
+\newcommand{\tytul}[1]{\def\bs@tytul{#1}}
+\newcommand{\podtytul}[1]{\def\bs@podtytul{#1}}
+\newcommand{\autor}[1]{\def\bs@autor{#1}}
+\newcommand{\rok}[1]{\def\bs@rok{#1}}
+\tytul{}\podtytul{}\autor{}\rok{}
+
+% ---------- Pagina ----------
+\pagestyle{fancy}
+\fancyhf{}
+\renewcommand{\headrulewidth}{0pt}
+\fancyhead[LE]{\footnotesize\color{szary3}\etykieta{\bs@tytul}}
+\fancyhead[RO]{\footnotesize\color{szary3}\etykieta{\rightmark}}
+\fancyfoot[LE,RO]{\footnotesize\color{szary3}\thepage}
+\fancypagestyle{plain}{\fancyhf{}\fancyfoot[LE,RO]{\footnotesize\color{szary3}\thepage}}
+
+% ---------- Strona tytułowa ----------
+\newcommand{\stronatytulowa}{%
+  \begin{titlepage}
+    \RaggedRight
+    \vspace*{30mm}
+    {\displayfont\bfseries\fontsize{28}{32}\selectfont \bs@tytul\par}
+    \vspace{5mm}
+    {\color{szary3}\rule{24mm}{0.5pt}\par}
+    \vspace{5mm}
+    {\large\color{szary3}\bs@podtytul\par}
+    \vfill
+    {\small\etykieta{\bs@autor}\par}
+    \vspace{1mm}
+    {\small\color{szary2}\bs@rok\par}
+  \end{titlepage}
+  \cleardoublepage}
+
+% ---------- Spis płyt ----------
+\addto\captionspolish{\renewcommand{\contentsname}{Spis płyt}}
+\renewcommand{\cfttoctitlefont}{\tierfont}
+\renewcommand{\cftaftertoctitle}{\par\vspace{2mm}{\color{szary3}\rule{20mm}{0.4pt}}}
+\setlength{\cftbeforetoctitleskip}{18mm}
+\setlength{\cftaftertoctitleskip}{6mm}
+\renewcommand{\cftsecfont}{\footnotesize\bfseries\addfontfeatures{LetterSpace=6}}
+\renewcommand{\cftsecpagefont}{\footnotesize\bfseries}
+\renewcommand{\cftsecleader}{\hfill}
+\setlength{\cftbeforesecskip}{3.5mm}
+\renewcommand{\cftsubsecfont}{\footnotesize}
+\renewcommand{\cftsubsecpagefont}{\footnotesize\color{szary2}}
+\renewcommand{\cftsubsecleader}{\hfill}
+\setlength{\cftsubsecindent}{0pt}
+\setlength{\cftbeforesubsecskip}{0.6mm}
+
+% ---------- Rozdział (wstęp, posłowie) ----------
+\newcommand{\bs@naglowek}[1]{%
+  \vspace*{18mm}
+  {\RaggedRight\tierfont #1\par}
+  \vspace{2mm}{\color{szary3}\rule{20mm}{0.4pt}\par}
+  \vspace{8mm}\@afterindentfalse\@afterheading}
+
+\newcommand{\rozdzial}[1]{%
+  \cleardoublepage\thispagestyle{plain}%
+  \markright{#1}\phantomsection
+  \addcontentsline{toc}{section}{#1}%
+  \bs@naglowek{#1}}
+
+% ---------- Tier ----------
+% \tier{I}{Filary}
+\newcommand{\tier}[2]{%
+  \cleardoublepage\thispagestyle{plain}%
+  \markright{#2}\phantomsection
+  \addcontentsline{toc}{section}{\texorpdfstring{#1\hspace{0.6em}#2}{#1. #2}}%
+  \vspace*{12mm}
+  {\numerfont #1\par}
+  \vspace{-4mm}
+  \bs@naglowek{#2}}
+
+% ---------- Album ----------
+\newlength{\okladkaszer}\setlength{\okladkaszer}{28mm}
+\newlength{\okladkaodstep}\setlength{\okladkaodstep}{5mm}
+\newlength{\albumodstep}\setlength{\albumodstep}{7mm}
+
+\newcommand{\okladka}[1]{%
+  \IfFileExists{#1}%
+    {\includegraphics[width=\okladkaszer,height=\okladkaszer,keepaspectratio]{#1}}%
+    {{\setlength{\fboxsep}{0pt}%
+      \colorbox{szary1}{\parbox[c][\okladkaszer][c]{\okladkaszer}%
+        {\centering\scriptsize\color{szary2}okładka}}}}}
+
+% \begin{album}{okladki/plik.jpg}{Artysta}{Tytuł}{1971 · BR · pt}
+%   opis
+% \end{album}
+\newenvironment{album}[4]{%
+  \par\addvspace{\albumodstep}%
+  \phantomsection\addcontentsline{toc}{subsection}{\texorpdfstring{#2 — \textit{#3}}{#2 — #3}}%
+  \noindent
+  \begin{minipage}[t]{\okladkaszer}\vspace{0pt}\okladka{#1}\end{minipage}%
+  \hspace{\okladkaodstep}%
+  \begin{minipage}[t]{\dimexpr\linewidth-\okladkaszer-\okladkaodstep\relax}\vspace{-0.3ex}%
+    \RaggedRight
+    {\artystafont #2\par}
+    {\tytulfont #3\par}
+    \vspace{0.4ex}{\metafont #4\par}
+    \vspace{1.4ex}\small
+}{%
+  \end{minipage}\par}
+\makeatother
+
+\endinput

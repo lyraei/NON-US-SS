@@ -1,0 +1,63 @@
+% Makra używane w treści (tex/*.tex).
+\makeatletter
+
+% Oryginał + transliteracja: \oryg{Янка Дягилева}{Yanka Dyagileva}
+\newcommand{\oryg}[2]{\texorpdfstring{#1\hspace{0.45em}{\color{szary2}\mdseries\upshape #2}}{#1 (#2)}}
+
+% ---------- Rozdział (wstęp, posłowie) ----------
+% \rozdzial{Wstęp}
+\newcommand{\rozdzial}[1]{%
+    \cleardoublepage\thispagestyle{plain}%
+    \markright{#1}\phantomsection
+    \addcontentsline{toc}{section}{#1}%
+    \bs@naglowek{#1}}
+
+\newcommand{\engtytul}[1]{%
+    \cleardoublepage\thispagestyle{plain}%
+    \markright{#1}\phantomsection
+    \addcontentsline{toc}{section}{#1}%
+    \bs@naglowek{#1}}    
+
+% ---------- Tier ----------
+% \tier{I}{Filary}
+\newcommand{\tier}[2]{%
+    \cleardoublepage\thispagestyle{plain}%
+    \markright{#2}\phantomsection
+    \addcontentsline{toc}{section}{\texorpdfstring{#1\hspace{0.6em}#2}{#1. #2}}%
+    \vspace*{12mm}
+    {\numerfont #1\par}
+    \vspace{-4mm}
+    \bs@naglowek{#2}}
+
+% ---------- Album ----------
+\newlength{\okladkaszer}\setlength{\okladkaszer}{28mm}
+\newlength{\okladkaodstep}\setlength{\okladkaodstep}{5mm}
+\newlength{\albumodstep}\setlength{\albumodstep}{7mm}
+
+% Ścieżka względem img/; brak pliku → szary placeholder
+\newcommand{\okladka}[1]{%
+    \IfFileExists{img/#1}%
+    {\includegraphics[width=\okladkaszer,height=\okladkaszer,keepaspectratio]{#1}}%
+    {{\setlength{\fboxsep}{0pt}%
+            \colorbox{szary1}{\parbox[c][\okladkaszer][c]{\okladkaszer}%
+                {\centering\scriptsize\color{szary2}okładka}}}}}
+
+% \begin{album}{okladki/plik.jpg}{Artysta}{Tytuł}{1971 · BR · pt}
+%   opis
+% \end{album}
+\newenvironment{album}[4]{%
+    \par\addvspace{\albumodstep}%
+    \phantomsection\addcontentsline{toc}{subsection}{\texorpdfstring{#2 — \textit{#3}}{#2 — #3}}%
+    \noindent
+    \begin{minipage}[t]{\okladkaszer}\vspace{0pt}\okladka{#1}\end{minipage}%
+    \hspace{\okladkaodstep}%
+    \begin{minipage}[t]{\dimexpr\linewidth-\okladkaszer-\okladkaodstep\relax}\vspace{-0.3ex}%
+        \RaggedRight
+        {\artystafont #2\par}
+        {\tytulfont #3\par}
+        \vspace{0.4ex}{\metafont #4\par}
+        \vspace{1.4ex}\small
+}{%
+    \end{minipage}\par}
+
+\makeatother

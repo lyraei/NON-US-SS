@@ -1,0 +1,32 @@
+% ---------- Strona (A5, książeczka) ----------
+\usepackage[a5paper,
+    inner=17mm, outer=14mm, top=18mm, bottom=20mm,
+    headsep=6mm, footskip=10mm]{geometry}
+
+% ---------- Język i fonty ----------
+\usepackage[russian,main=polish]{babel}
+\usepackage{luatexja-fontspec}         % japoński; ładuje też fontspec
+\ltjsetparameter{jacharrange={-2,-3}} % cyrylica i symbole jako znaki łacińskie (bez rozstrzelenia)
+
+\setmainfont{Inter}[
+    Ligatures=TeX,
+    RawFeature={+ss01} % alternatywne cyfry; usuń, jeśli wolisz klasyczne
+]
+\newfontfamily\displayfont{Inter Display}[Ligatures=TeX] % Inter 4.x; jeśli brak → zmień na {Inter}
+\setmainjfont{HaranoAjiGothic-Regular.otf}[BoldFont=HaranoAjiGothic-Bold.otf]
+% Alternatywa, jeśli masz Noto: \setmainjfont{Noto Sans CJK JP}
+
+\usepackage{microtype}
+\usepackage{csquotes}
+
+% ---------- Pakiety pomocnicze ----------
+\usepackage{xcolor}
+\usepackage{graphicx}
+\graphicspath{{img/}}
+\usepackage{ragged2e}
+\usepackage{fancyhdr}
+\usepackage[titles]{tocloft}
+\usepackage{lipsum} % tylko do podglądu — usuń, gdy wstawisz własne teksty
+\usepackage[backend=biber]{biblatex}
+\addbibresource{bibliografia.bib}
+\usepackage[hidelinks]{hyperref}

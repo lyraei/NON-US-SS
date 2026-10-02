@@ -1,0 +1,5 @@
+{
+    "latex-workshop.latex.recipes": [{ "name": "latexmk", "tools": ["latexmk"] }],
+    "latex-workshop.latex.tools": [{ "name": "latexmk", "command": "latexmk", "args": [] }],
+    "latex-workshop.latex.outDir": "%DIR%/build"
+}
