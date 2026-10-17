@@ -1,0 +1,13 @@
+* text=auto eol=lf
+
+*.tex   text diff=tex
+*.sty   text diff=tex
+*.md    text
+
+*.otf     binary
+*.ttf     binary
+*.jpg     binary
+*.jpeg    binary
+*.png     binary
+*.pdf     binary
+*.numbers binary

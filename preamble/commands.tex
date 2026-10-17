@@ -1,4 +1,4 @@
-% Makra używane w treści (tex/*.tex): \motto, \wstep, \tier, album, \cytat, \kolofon.
+% Makra używane w treści (tex/*.tex): \motto, \wstep, \tier, album, \cytat, \przerwa, \kolofon.
 \makeatletter
 \ExplSyntaxOn
 
@@ -180,6 +180,13 @@
   \par\medskip
   {\centering\color{tier}\rule{12mm}{1.2pt}\par\smallskip
    \itshape\large #1\par}%
+  \medskip}
+
+% ---------- Przerwa (separator między fragmentami tekstu) ----------------
+% \przerwa
+\newcommand\przerwa{%
+  \par\medskip
+  {\centering\color{tier}\rule{12mm}{0.8pt}\par}%
   \medskip}
 
 % ---------- Kolofon (jak „Recorded at…” na końcu wkładki) ---------------

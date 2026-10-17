@@ -1,2 +1,31 @@
+# ---------- Wyniki kompilacji (latexmk → build/) ----------
 build/
+
+# na wypadek kompilacji poza latexmk / bez outDir
+*.aux
+*.fdb_latexmk
+*.fls
+*.log
+*.out
+*.toc
+*.trk
+*.synctex.gz
+*.synctex(busy)
+*.xdv
+*.bbl
+*.blg
+*.bcf
+*.run.xml
+/main.pdf
+
+# ---------- System / edytor ----------
 .DS_Store
+._*
+*~
+*.swp
+.vscode/*
+!.vscode/settings.json
+!.vscode/extensions.json
+
+# ---------- Prywatne notatki ----------
+ideologia.md
